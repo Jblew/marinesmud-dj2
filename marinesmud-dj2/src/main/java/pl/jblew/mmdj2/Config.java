@@ -28,7 +28,11 @@ public class Config {
     
     public Config() {
         webServerConfig.listenDomain = "0.0.0.0";
-        webServerConfig.externalDomain = "kelvin";
-        webServerConfig.cookieDomain = "kelvin";
+        webServerConfig.externalDomain = "mmdj2";
+        webServerConfig.cookieDomain = "mmdj2";
+        webServerConfig.useTemporarySelfSignedCertificate = false;
+        webServerConfig.sslCertPemFile = StaticConfig.DEFAULT_CERT_PEM_PATH;
+        webServerConfig.sslKeyPemFile = StaticConfig.DEFAULT_KEY_PEM_PATH;
+        webServerConfig.sslPassword = StaticConfig.DEFAULT_SSL_PASSWORD;
     }
 }

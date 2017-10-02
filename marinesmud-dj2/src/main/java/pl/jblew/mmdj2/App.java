@@ -30,6 +30,7 @@ import pl.jblew.mmdj2.ui.UI;
 import pl.jblew.mmdj2.web.modules.AppJSModule;
 import pl.jblew.mmdj2.web.modules.IndexModule;
 import pl.jblew.mmdj2.web.webroot.Webroot;
+
 /**
  * Hello world!
  *
@@ -42,20 +43,22 @@ public class App {
 
     public void start() throws IOException, PasswordStorage.CannotPerformOperationException, InterruptedException {
         init1_setLoggingFormatters();
-        
 
         //LOAD CONFIG
-        JSONObjectLoader<Config> configLoader = new JSONObjectLoader(Config.class, new File(StaticConfig.CONFIG_PATH));
-        Config config = configLoader.loadObject(new Config());
-        //configLoader.save(config);
+        JSONObjectLoader<Config> configLoader;
+        Config config = new Config();
+        if (StaticConfig.SAVE_LOAD_CONFIG) {
+            configLoader = new JSONObjectLoader(Config.class, new File(StaticConfig.CONFIG_PATH));
+            config = configLoader.loadObject(config);
+            configLoader.save(config);
+        }
 
         //CREATE CONTEXT
         ServiceManager serviceManager = new ServiceManager(config.services);
         AppContext context = new AppContext(config.scene, serviceManager);
         serviceManager.addProvider(new ServiceInjector(context, AppContext.class));
         serviceManager.addProvider(new UI.Provider());
-        
-        
+
         RemoteComponents rc = serviceManager.getService(RemoteComponents.class);
         WebSocketFrameHandler wsHandler = rc.initialize(new AsyncEventBus(context.getCommonExecutor()));
 
@@ -67,8 +70,6 @@ public class App {
             credentialsManager = new CredentialsManager<>(users);
             context.executeInContextThread(() -> {
                 context.getState().defaultPassword = true;
-                context.getState().severeWarnings.add("Default password is enabled!");
-                Logger.getLogger(App.class.getName()).severe("[SECURITY WARNING] Default password is enabled!. To disable it – please add user to config file.");
             });
         } else {
             credentialsManager = new CredentialsManager<>(config.credentials);
@@ -79,7 +80,6 @@ public class App {
         webModules.put("index", new IndexModule(credentialsManager, context));
         webModules.put("app.js", new AppJSModule(credentialsManager));
 
-        
         RoutingHttpResponder router = new RoutingHttpResponder(webModules);
         WebServer webServer = new WebServer(config.webServerConfig, router, new ClasspathStaticFileLoader(Webroot.class), wsHandler);
 
@@ -99,13 +99,15 @@ public class App {
         }
 
         //SCHEDULE CONFIG SAVING
-        /*context.scheduleInContext(() -> {
-            try {
-                configLoader.save(config);
-            } catch (IOException ex) {
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }, 60, TimeUnit.SECONDS);*/
+        if (StaticConfig.SAVE_LOAD_CONFIG) {
+            context.scheduleInContext(() -> {
+                try {
+                    configLoader.save(config);
+                } catch (IOException ex) {
+                    Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }, 60, TimeUnit.SECONDS);
+        }
 
         //ADD SHUTDOWN HOOKS
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -115,6 +117,8 @@ public class App {
                 webServer.stop();
             }
         });
+
+        checkSecurity(context, config);
 
         //LAUNCH WEB SERVER
         Logger.getLogger("io.netty").setLevel(Level.OFF);
@@ -138,5 +142,23 @@ public class App {
         for (Handler h : Logger.getLogger("").getHandlers()) {
             h.setFormatter(new SingleLineFormatter(false));
         }
+    }
+
+    private void checkSecurity(AppContext context, Config config) {
+        context.executeInContextThread(() -> {
+            if (context.getState().defaultPassword) {
+                context.getState().severeWarnings.add("Default password is enabled");
+                Logger.getLogger(App.class.getName()).severe("[SECURITY WARNING] Default password is enabled. To disable it – please add user to config file.");
+            }
+
+            if (config.webServerConfig.useTemporarySelfSignedCertificate) {
+                context.getState().severeWarnings.add("Using weak temporary self signed certificate for ssl.");
+                Logger.getLogger(App.class.getName()).severe("[SECURITY WARNING] Using weak temporary self signed certificate for ssl.");
+            } else if (config.webServerConfig.sslCertPemFile.equals(StaticConfig.DEFAULT_CERT_PEM_PATH)) {
+                context.getState().severeWarnings.add("Using default certificate, which is published on github.");
+                Logger.getLogger(App.class.getName()).severe("[SECURITY WARNING] Using default certificate, which is published on github.");
+            }
+        });
+
     }
 }

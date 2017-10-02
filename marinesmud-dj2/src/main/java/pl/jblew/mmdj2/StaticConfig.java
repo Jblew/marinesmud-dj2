@@ -11,6 +11,10 @@ package pl.jblew.mmdj2;
  */
 public final class StaticConfig {
     public static final String CONFIG_PATH = "config.json";
+    public static final boolean SAVE_LOAD_CONFIG = false;
+    public static final String DEFAULT_KEY_PEM_PATH = System.getProperty("user.dir")+"/ssl/default.key.pkcs8.pem";
+    public static final String DEFAULT_CERT_PEM_PATH = System.getProperty("user.dir")+"/ssl/default.cert.pem";
+    public static final String DEFAULT_SSL_PASSWORD = "cert";
     
     private StaticConfig() {}
 }
