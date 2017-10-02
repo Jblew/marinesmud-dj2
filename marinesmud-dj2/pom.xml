@@ -19,7 +19,17 @@
             <id>4thline-repo</id>
             <url>http://4thline.org/m2</url>
             <snapshots>
-                <enabled>false</enabled> <!-- Or true, if you like to use unreleased code -->
+                <enabled>false</enabled> <!-- Or true, if you like to use unreleased code-->
+            </snapshots>
+        </repository>
+        <repository>
+            <id>bintray</id>
+            <url>https://jcenter.bintray.com</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
@@ -55,6 +65,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.8.6</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.jblew.marinesmud.framework</groupId>
+            <artifactId>marinesmud-framework</artifactId>
+            <version>1.0.18</version>
         </dependency>
         <!--<dependency>
             <groupId>org.netbeans.platform</groupId>

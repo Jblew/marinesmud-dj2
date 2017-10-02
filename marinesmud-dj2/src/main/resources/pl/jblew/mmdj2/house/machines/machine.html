@@ -1,0 +1,26 @@
+<div class="machine machine-{{id}}" id="{{uid}}">
+    <h2>{{name}}</h2>
+    <pre class="machine-area-state machine-{{id}}-area-state" id="{{uid}}-state">{{state}}</pre>
+    <textarea class="machine-area-settings machine-{{id}}-area-settings" rows="6" id="{{uid}}-settings">{{settings}}</textarea>
+    <button class="save-button" id="{{uid}}-save-btn">Zapisz</button>
+    <hr />
+    {{logComponent}}
+</div>
+<script>
+    $(document).ready(function() {
+        window.channel.on('{{dataChangedEventClass}}', function(data) {
+            if(data.id === "{{id}}") {
+                console.log("Updating state: "+JSON.stringify(data));
+                $("#{{uid}}-state").html(data.state);
+                $("#{{uid}}-settings").val(data.settings);
+                //$("#{{uid}}").append("<div class=\"log-component-item\"><span class=\"log-component-time\">"+data.time+"</span> "+data.msg+"</div>");
+            }
+        });
+        
+        $("#{{uid}}-save-btn").on('click', function() {
+            window.channel.send('{{saveSettingsRequestClass}}', {id: "{{id}}", settings: $("#{{uid}}-settings").val()})
+        });  
+        
+        $("#{{uid}}-settings").attr("rows", $("#{{uid}}-settings").text().split("\n").length+"");
+    });
+</script>

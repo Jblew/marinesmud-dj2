@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>{{title}} – MarinesMUD Doctor</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style type="text/css">
+            /* https://coolors.co/e4572e-ffd52b-17bebb-2e282a-76b041
+            */
+            html, body {
+                margin: 0;
+                padding: 0;
+                background:
+                    radial-gradient(#444444 15%, transparent 16%) 0 0,
+                    radial-gradient(#444444 15%, transparent 16%) 8px 8px,
+                    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+                    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+                background-color:#606060;
+                background-size:16px 16px;
+                margin-bottom: 50px;
+            }
+
+            #title-bar {
+                background: #17BEBB;
+                padding-top: 15px;
+                padding-bottom: 0;
+                padding-left: 17px;
+                font-family: monospace;
+                border-bottom: 5px solid #E4572E;
+            }
+
+            #tabs-headers {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+            }
+            #tabs-headers li {
+                display: inline-block;
+                padding: 0;
+                margin: 0;
+            }
+
+            #tabs-headers li.tab-link {
+                background: none;
+                color: #222;
+                cursor: pointer;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 10px;
+                padding-right: 10px;
+                background: rgba(255, 255, 255, 0.5);
+                margin-right: 10px;
+
+            }
+
+            #tabs-headers li.current{
+                background: #ededed;
+                color: #222;
+            }
+
+            .tab-content {
+                display: none;
+                background: white;
+                padding: 15px;
+                min-height: 450px;
+                border-bottom: 5px solid black;
+            }
+
+            .tab-content.current{
+                display: inherit;
+            }
+
+            #tabs-headers li.title-li {
+                margin: 0;
+                padding: 0;
+                position: relative;
+                width: 145px;
+                height: 15px;
+            }
+
+            #tabs-headers li.title-li h1 {
+                margin: 0;
+                padding: 0;
+                bottom: -11px;
+                color: #2E282A;
+                font-size: 22px;
+                position: absolute;
+            }
+
+            #tabs-contents {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                min-height: 250px;
+            }
+
+            #close-current-tab-btn {
+                position: absolute;
+                top: 19px;
+                right: 15px;
+                font-size: 30px;
+                padding: 5px;
+                padding-left: 11px;
+                padding-right: 11px;
+                background: rgba(0, 0, 0, 0.5);
+                color: white;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="title-bar">
+
+            <ul id="tabs-headers">
+                <li class="title-li"><h1>marinesmud kelvin</h1></li>
+
+            </ul>
+        </div>
+        {{body}}
+
+
+    </body>
+</html>

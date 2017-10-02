@@ -28,7 +28,7 @@ import javax.swing.JFrame;
 public class DMXSocketTest {
 
     int serverPort = 5534;
-    int fps = 18;
+    int fps = 20;
 
     public DMXSocketTest() throws IOException {
         ServerSocket serverSocket = new ServerSocket(serverPort);
@@ -59,7 +59,7 @@ public class DMXSocketTest {
                     float hue = 0f;
 
                     while (true) {
-                        hue += 0.004f;
+                        hue += 0.02f;
                         if (hue > 1f) {
                             hue = 0;
                         }
@@ -74,22 +74,19 @@ public class DMXSocketTest {
                             //byte b0 = (byte) (val >>> 8);
                             //byte b1 = (byte) (val);
 
-                            Color c = Color.getHSBColor(hue, 1f, 1f);
-                            int r255 = c.getRed();
-                            int g255 = c.getGreen();
-                            int b255 = c.getBlue();
-                            double rd = (double)r255/255d;///Math.pow((double) r255 / 255d, 2d);
-                            double gd = (double)g255/255d;//Math.pow((double) g255 / 255d, 2d);
-                            double bd = (double)b255/255d;//Math.pow((double) b255 / 255d, 2d);
-                            int r5000 = (int) Math.floor(rd * 5000d);
-                            int g5000 = (int) Math.floor(gd * 5000d);
-                            int b5000 = (int) Math.floor(bd * 5000d);
-                            byte rb0 = (byte) (r5000 >>> 8);
-                            byte rb1 = (byte) (r5000);
-                            byte gb0 = (byte) (g5000 >>> 8);
-                            byte gb1 = (byte) (g5000);
-                            byte bb0 = (byte) (b5000 >>> 8);
-                            byte bb1 = (byte) (b5000);
+                            
+                            double negPanA = Math.random()*0.5d;
+                            double negPanB = Math.random()*0.5d;
+                            
+                            double brightness = Math.pow(Math.random()*0.1d+0.9d, 2d);
+                            double huefire = (10d+Math.random()*20d)/255d;//hue 7 -> 60
+                            Color c = Color.getHSBColor((float)huefire, 1f, (float)brightness);
+                            byte [] r1 = v((double)c.getRed()/255d-negPanA);
+                            byte [] g1 = v((double)c.getGreen()*0.4d/255d - negPanB);
+                            byte [] r2 = v((double)c.getRed()/255d*(1d) - negPanA);
+                            byte [] g2 = v((double)c.getGreen()*0.4d/255d*(1d) - negPanB);
+                            byte [] b = v((double)c.getBlue()*0.4d/255d);
+                            byte [] u = v(0d);
 
                             /*
                             CHAN 00 -> GREEN_UP
@@ -101,20 +98,20 @@ public class DMXSocketTest {
                             CHAN 06 -> GREEN_BOTTOM
                              */
                             byte[] out = new byte[14];
-                            out[0] = gb0;
-                            out[1] = gb1;
-                            out[2] = rb0;
-                            out[3] = rb1;
+                            out[0] = g1[0];
+                            out[1] = g1[1];
+                            out[2] = r1[0];
+                            out[3] = r1[1];
                             out[4] = 0;
                             out[5] = 0;
                             out[6] = 0;
                             out[7] = 0;
-                            out[8] = bb0;
-                            out[9] = bb1;
-                            out[10] = rb0;
-                            out[11] = rb1;
-                            out[12] = gb0;
-                            out[13] = gb1;
+                            out[8] = b[0];
+                            out[9] = b[1];
+                            out[10] = r2[0];
+                            out[11] = r2[1];
+                            out[12] = g2[0];
+                            out[13] = g2[1];
 
                             os.write(out);
                             os.flush();
@@ -206,6 +203,12 @@ public class DMXSocketTest {
         System.out.println("lagTime = " + lagTimeMs + "ms = " + ((double) lagTimeMs / (double) (fps * times.length) * 100d) + "% of time");
     }
 
+    private byte [] v(double a) {
+        int v5000 = (int) Math.floor(a * 5000d);
+                            byte b0 = (byte) (v5000 >>> 8);
+                            byte b1 = (byte) (v5000);
+        return new byte [] {b0, b1};
+    } 
 }
 
 /*
