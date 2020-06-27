@@ -10,8 +10,9 @@ package pl.jblew.mmdj2.signals;
  * @author teofil
  */
 public interface Channel {
-    public int getChannelCount();
+    //public int getChannelCount();
     public void setValues(double [] values);
     public boolean isTerminator();
     public void setEndpoint(Channel c);
+    public void shutdown();
 }

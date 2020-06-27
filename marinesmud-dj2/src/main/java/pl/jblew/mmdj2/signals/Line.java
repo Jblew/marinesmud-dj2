@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.jblew.mmdj2.ui;
+package pl.jblew.mmdj2.signals;
 
 /**
  *
  * @author teofil
  */
-public class LineUI {
+public class Line {
     
 }

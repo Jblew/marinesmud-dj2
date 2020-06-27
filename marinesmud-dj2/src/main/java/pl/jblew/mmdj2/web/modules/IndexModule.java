@@ -29,7 +29,7 @@ public class IndexModule extends AbstractAuthenticatedModule<User> {
     private final AppContext context;
     
     public IndexModule(CredentialsManager<User> credentials, AppContext context) {
-        super(Webroot.class, credentials);
+        super(Webroot.class, "default", "login.form", credentials);
         this.context = context;
     }
     
